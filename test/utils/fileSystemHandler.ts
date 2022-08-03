@@ -75,12 +75,27 @@ describe('File System Utils', () => {
   });
 
   describe('ensureFileExists', () => {
-    it('should ensure file exists', () => {
+    it('file already exists', () => {
+      const path = join('path', 'to', 'a', 'file.x');
+      const existsSyncStub = env.stub(fs, 'existsSync').returns(true);
+
+      fsUtil.ensureFileExists(path);
+
+      // somewhat validating ensureDirectoryExists was called first
+      expect(existsSyncStub.firstCall.args[0]).to.equal(path);
+    });
+
+    it('dir exists, file does not', () => {
       const path = join('path', 'to', 'a', 'file.x');
       const closeStub = env.stub(fs, 'closeSync');
       const openStub = env.stub(fs, 'openSync');
       openStub.returns(123);
-      const existsSyncStub = env.stub(fs, 'existsSync').returns(true);
+      const existsSyncStub = env
+        .stub(fs, 'existsSync')
+        .withArgs(path)
+        .returns(false)
+        .withArgs(join('path', 'to', 'a'))
+        .returns(true);
 
       fsUtil.ensureFileExists(path);
 
