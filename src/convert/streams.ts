@@ -25,6 +25,8 @@ import { SfdxFileFormat, WriteInfo, WriterFormat } from './types';
 Messages.importMessagesDirectory(__dirname);
 const messages = Messages.load('@salesforce/source-deploy-retrieve', 'sdr', ['error_convert_invalid_format']);
 
+const objectLimit = 500;
+
 export const pipeline = promisify(cbPipeline);
 
 export const stream2buffer = async (stream: Stream): Promise<Buffer> => {
@@ -42,7 +44,7 @@ export class ComponentReader extends Readable {
   private iter: Iterator<SourceComponent>;
 
   public constructor(components: Iterable<SourceComponent>) {
-    super({ objectMode: true, highWaterMark: 2000 });
+    super({ objectMode: true, highWaterMark: objectLimit });
     this.iter = this.createIterator(components);
   }
 
@@ -75,7 +77,7 @@ export class ComponentConverter extends Transform {
     mergeSet?: ComponentSet,
     defaultDirectory?: string
   ) {
-    super({ objectMode: true });
+    super({ objectMode: true, highWaterMark: objectLimit });
     this.targetFormat = targetFormat;
     this.mergeSet = mergeSet;
     this.transformerFactory = new MetadataTransformerFactory(registry, this.context);
@@ -146,7 +148,7 @@ export abstract class ComponentWriter extends Writable {
   protected rootDestination?: SourcePath;
 
   public constructor(rootDestination?: SourcePath) {
-    super({ objectMode: true });
+    super({ objectMode: true, highWaterMark: objectLimit });
     this.rootDestination = rootDestination;
   }
 }
