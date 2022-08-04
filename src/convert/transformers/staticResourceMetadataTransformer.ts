@@ -122,7 +122,7 @@ export class StaticResourceMetadataTransformer extends BaseMetadataTransformer {
 
   /**
    * Only separated into its own method for unit testing purposes
-   * I was unable to find a way to stub/spy a pipline() call
+   * I was unable to find a way to stub/spy a pipeline() call
    *
    * @param stream the data to be written
    * @param destination the destination path to be written
