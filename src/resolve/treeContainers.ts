@@ -116,8 +116,15 @@ export class NodeFSTreeContainer extends TreeContainer {
     return readFileSync(fsPath);
   }
 
-  public stream(fsPath: SourcePath): Readable {
-    return createReadStream(fsPath);
+  public stream(fsPath: SourcePath, turns = 0): Readable {
+    try {
+      return createReadStream(fsPath);
+    } catch (e) {
+      if (turns < 100) {
+        return this.stream(fsPath, turns + 1);
+      }
+      throw e;
+    }
   }
 }
 
