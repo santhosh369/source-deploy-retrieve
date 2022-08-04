@@ -42,7 +42,7 @@ export class ComponentReader extends Readable {
   private iter: Iterator<SourceComponent>;
 
   public constructor(components: Iterable<SourceComponent>) {
-    super({ objectMode: true });
+    super({ objectMode: true, highWaterMark: 4000 });
     this.iter = this.createIterator(components);
   }
 
